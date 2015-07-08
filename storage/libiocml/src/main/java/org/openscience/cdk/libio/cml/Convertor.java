@@ -55,6 +55,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IReactionScheme;
 import org.openscience.cdk.interfaces.IReactionSet;
 import org.openscience.cdk.interfaces.IStrand;
+import org.openscience.cdk.interfaces.ISubstance;
 import org.openscience.cdk.tools.IDCreator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -382,6 +383,44 @@ public class Convertor {
 
     public CMLMolecule cdkCrystalToCMLMolecule(ICrystal crystal) {
         return cdkCrystalToCMLMolecule(crystal, true);
+    }
+    
+    /*
+     * @Author : Sina M. Nick
+     * TODO: Check if ontologies are right
+     */
+    public CMLMolecule cdkSubstanceToCMLMolecule(ISubstance model) {
+    	CMLMolecule cmlMolecule = new CMLMolecule();
+    	cmlMolecule.setConvention("Substance");
+    	cmlMolecule.setDictRef("cml:Substance");
+
+    	if(model.getID() != null)
+    	cmlMolecule.setId(model.getID());
+    	else
+    		cmlMolecule.setId("AN ID");
+
+    	for (int j = 0; j < model.getAtomContainerCount() ; j++){
+    		
+    		IAtomContainer atoms = model.getAtomContainer(j);
+    		for (int i = 0; i < atoms.getAtomCount(); i++) {
+    			IAtom cdkAtom = atoms.getAtom(i);
+    			CMLAtom cmlAtom = cdkAtomToCMLAtom(atoms, cdkAtom);
+    			if (atoms.getConnectedSingleElectronsCount(cdkAtom) > 0) {
+    				cmlAtom.setSpinMultiplicity(atoms.getConnectedSingleElectronsCount(cdkAtom) + 1);
+    			}
+    			cmlMolecule.addAtom(cmlAtom);
+    		}
+    		for (int i = 0; i < atoms.getBondCount(); i++) {
+                CMLBond cmlBond = cdkBondToCMLBond(atoms.getBond(i));
+                cmlMolecule.addBond(cmlBond);
+            }
+    		
+    	}
+    	
+    	
+        
+        
+    	return cmlMolecule;
     }
 
     private CMLMolecule cdkCrystalToCMLMolecule(ICrystal crystal, boolean setIDs) {
