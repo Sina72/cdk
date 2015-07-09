@@ -82,7 +82,7 @@ public class ConvertorTest extends CDKTestCase {
     }
     
     @Test
-    public void testCdkSubstanceToCMLMolecule() throws IOException {
+    public void testCdkSubstanceToCMLSubstance() throws IOException {
 
         IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
         ISubstance substance = builder.newInstance(ISubstance.class);
@@ -103,6 +103,8 @@ public class ConvertorTest extends CDKTestCase {
         molecule.addBond(b1);
         molecule.addBond(b2);
         molecule.addBond(b3);
+        
+        molecule.setID("ID1");
         
         substance.addAtomContainer(molecule); 
         
@@ -127,18 +129,12 @@ public class ConvertorTest extends CDKTestCase {
         moleculeTwo.addBond(b_3);
         moleculeTwo.addBond(b_4);
         
+        moleculeTwo.setID("ID2");
+        
         substance.addAtomContainer(moleculeTwo);
         
-        
-      //Molecule  set as Molecule
-        IAtomContainer moleculebounder = new AtomContainer();
-        Bond MoleculeBound = new Bond(F5,S1);
-        moleculebounder.addBond(MoleculeBound);
-        
-        substance.addAtomContainer(moleculebounder);
-
         Convertor convertor = new Convertor(true, null);
-        CMLMolecule convertedSubstance = convertor.cdkSubstanceToCMLMolecule(substance);
+        CMLSubstance convertedSubstance = convertor.cdkSubstanceToCMLSubstance(substance);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -146,12 +142,11 @@ public class ConvertorTest extends CDKTestCase {
 
         serializer.write(new Document(convertedSubstance));
 
+        System.out.println(out);
+        
         out.close();
 
-        String expected = "Unkown";
-        String actual = new String(out.toByteArray());
-        System.out.println(out);
-        Assert.assertTrue(actual.contains(expected));
+        
 
     }
 

@@ -386,41 +386,34 @@ public class Convertor {
     }
     
     /*
-     * @Author : Sina M. Nick
-     * TODO: Check if ontologies are right
+     * Author : Sina M. Nick
+     * TODO: Check for Ontologies and ID
      */
-    public CMLMolecule cdkSubstanceToCMLMolecule(ISubstance model) {
-    	CMLMolecule cmlMolecule = new CMLMolecule();
-    	cmlMolecule.setConvention("Substance");
-    	cmlMolecule.setDictRef("cml:Substance");
+    public CMLSubstance cdkSubstanceToCMLSubstance(ISubstance model) {
+    	CMLSubstance cmlSubstance = new CMLSubstance();
+    	cmlSubstance.setConvention("??");
+    	cmlSubstance.setDictRef("??:??");
 
     	if(model.getID() != null)
-    	cmlMolecule.setId(model.getID());
+    		cmlSubstance.setId(model.getID());
     	else
-    		cmlMolecule.setId("AN ID");
+    		cmlSubstance.setId("????");
 
     	for (int j = 0; j < model.getAtomContainerCount() ; j++){
-    		
-    		IAtomContainer atoms = model.getAtomContainer(j);
-    		for (int i = 0; i < atoms.getAtomCount(); i++) {
-    			IAtom cdkAtom = atoms.getAtom(i);
-    			CMLAtom cmlAtom = cdkAtomToCMLAtom(atoms, cdkAtom);
-    			if (atoms.getConnectedSingleElectronsCount(cdkAtom) > 0) {
-    				cmlAtom.setSpinMultiplicity(atoms.getConnectedSingleElectronsCount(cdkAtom) + 1);
-    			}
-    			cmlMolecule.addAtom(cmlAtom);
+    	
+    			IAtomContainer cdkAtomContainer = model.getAtomContainer(j);
+    			CMLMolecule cmlMolecule = cdkAtomContainerToCMLMolecule(cdkAtomContainer);
+    			
+    			if(cdkAtomContainer.getID() != null)
+    				cmlMolecule.setId(cdkAtomContainer.getID());
+    			
+    			cmlSubstance.addMolecule(cmlMolecule);
     		}
-    		for (int i = 0; i < atoms.getBondCount(); i++) {
-                CMLBond cmlBond = cdkBondToCMLBond(atoms.getBond(i));
-                cmlMolecule.addBond(cmlBond);
-            }
     		
-    	}
     	
     	
-        
-        
-    	return cmlMolecule;
+    	
+    	return cmlSubstance;
     }
 
     private CMLMolecule cdkCrystalToCMLMolecule(ICrystal crystal, boolean setIDs) {
