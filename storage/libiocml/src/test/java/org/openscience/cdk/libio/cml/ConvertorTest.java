@@ -48,127 +48,127 @@ import java.io.IOException;
  */
 public class ConvertorTest extends CDKTestCase {
 
-    /**
-     * @cdk.bug 1748257
-     */
-    @Ignore("moved to MDMoleculeTest")
-    public void testBug1748257() {}
+	/**
+	 * @cdk.bug 1748257
+	 */
+	@Ignore("moved to MDMoleculeTest")
+	public void testBug1748257() {}
 
-    @Test
-    public void testCdkBondToCMLBond_Wedge() throws IOException {
-
-        IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
-        IBond bond = builder.newInstance(IBond.class);
-        bond.setOrder(IBond.Order.SINGLE);
-        bond.setStereo(IBond.Stereo.UP);
-
-        Convertor convertor = new Convertor(true, null);
-        CMLBond cmlBond = convertor.cdkBondToCMLBond(bond);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        Serializer serializer = new Serializer(out, "UTF-8");
-
-        serializer.write(new Document(cmlBond));
-
-        out.close();
-
-        String expected = "<bondStereo dictRef=\"cml:W\">W</bondStereo>";
-        String actual = new String(out.toByteArray());
-
-        Assert.assertTrue(actual.contains(expected));
-
-    }
-    
 	@Test
-	public void testCdkSubstanceToCMLSubstance() throws IOException {
+	public void testCdkBondToCMLBond_Wedge() throws IOException {
 
-	IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
-	ISubstance substance = builder.newInstance(ISubstance.class);
+		IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
+		IBond bond = builder.newInstance(IBond.class);
+		bond.setOrder(IBond.Order.SINGLE);
+		bond.setStereo(IBond.Stereo.UP);
 
-	substance.setProperty("Chemical Substance", "nanomaterial");
-	substance.setID("Fe3O4");
+		Convertor convertor = new Convertor(true, null);
+		CMLBond cmlBond = convertor.cdkBondToCMLBond(bond);
 
-	// Fe2O3
-	IAtomContainer molecule = new AtomContainer();
-	Atom Fe1 = new Atom("Fe");
-	Atom Fe2 = new Atom("Fe");
-	Atom O3 = new Atom("O");
-	Atom O4 = new Atom("O");
-	Atom O5 = new Atom("O");
-	molecule.addAtom(Fe1);
-	molecule.addAtom(Fe2);
-	molecule.addAtom(O3);
-	molecule.addAtom(O4);
-	molecule.addAtom(O5);
-	Bond b1 = new Bond(O3, Fe1, IBond.Order.DOUBLE);
-	Bond b2 = new Bond(Fe1, O4, IBond.Order.SINGLE);
-	Bond b3 = new Bond(O4, Fe2, IBond.Order.SINGLE);
-	Bond b4 = new Bond(Fe2, O5, IBond.Order.DOUBLE);
-	molecule.addBond(b1);
-	molecule.addBond(b2);
-	molecule.addBond(b3);
-	molecule.addBond(b4);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-	molecule.setID("Fe2O3");
+		Serializer serializer = new Serializer(out, "UTF-8");
 
-	substance.addAtomContainer(molecule);
+		serializer.write(new Document(cmlBond));
 
-	// FeO
-	IAtomContainer moleculeTwo = new AtomContainer();
-	Atom Fe = new Atom("Fe");
-	Atom O = new Atom("O");
-	moleculeTwo.addAtom(Fe);
-	moleculeTwo.addAtom(O);
-	Bond b_1 = new Bond(Fe, O, IBond.Order.DOUBLE);
-	moleculeTwo.addBond(b_1);
+		out.close();
 
-	moleculeTwo.setID("FeO");
+		String expected = "<bondStereo dictRef=\"cml:W\">W</bondStereo>";
+		String actual = new String(out.toByteArray());
 
-	substance.addAtomContainer(moleculeTwo);
-
-	Convertor convertor = new Convertor(true, null);
-	CMLSubstance convertedSubstance = convertor.cdkSubstanceToCMLSubstance(substance);
-
-	ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-	Serializer serializer = new Serializer(out, "UTF-8");
-
-	serializer.write(new Document(convertedSubstance));
-
-	out.close();
-
-	String expected = "cmlx:npo=\"http://purl.bioontology.org/ontology/npo#\" dictRef=\"npo:NPO_1895\" id=\"Fe3O4";
-	String actual = new String(out.toByteArray());
-
-	Assert.assertTrue(actual.contains(expected));
+		Assert.assertTrue(actual.contains(expected));
 
 	}
 
-    @Test
-    public void testCdkBondToCMLBond_Hatch() throws IOException {
+	@Test
+	public void testCdkSubstanceToCMLSubstance() throws IOException {
 
-        IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
-        IBond bond = builder.newInstance(IBond.class);
-        bond.setOrder(IBond.Order.SINGLE);
-        bond.setStereo(IBond.Stereo.DOWN);
+		IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
+		ISubstance substance = builder.newInstance(ISubstance.class);
 
-        Convertor convertor = new Convertor(true, null);
-        CMLBond cmlBond = convertor.cdkBondToCMLBond(bond);
+		substance.setProperty("Chemical Substance", "nanomaterial");
+		substance.setID("Fe3O4");
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+		// Fe2O3
+		IAtomContainer molecule = new AtomContainer();
+		Atom Fe1 = new Atom("Fe");
+		Atom Fe2 = new Atom("Fe");
+		Atom O3 = new Atom("O");
+		Atom O4 = new Atom("O");
+		Atom O5 = new Atom("O");
+		molecule.addAtom(Fe1);
+		molecule.addAtom(Fe2);
+		molecule.addAtom(O3);
+		molecule.addAtom(O4);
+		molecule.addAtom(O5);
+		Bond b1 = new Bond(O3, Fe1, IBond.Order.DOUBLE);
+		Bond b2 = new Bond(Fe1, O4, IBond.Order.SINGLE);
+		Bond b3 = new Bond(O4, Fe2, IBond.Order.SINGLE);
+		Bond b4 = new Bond(Fe2, O5, IBond.Order.DOUBLE);
+		molecule.addBond(b1);
+		molecule.addBond(b2);
+		molecule.addBond(b3);
+		molecule.addBond(b4);
 
-        Serializer serializer = new Serializer(out, "UTF-8");
+		molecule.setID("Fe2O3");
 
-        serializer.write(new Document(cmlBond));
-        
-        out.close();
+		substance.addAtomContainer(molecule);
 
-        String expected = "<bondStereo dictRef=\"cml:H\">H</bondStereo>";
-        String actual = new String(out.toByteArray());
-        
-        Assert.assertTrue(actual.contains(expected));
+		// FeO
+		IAtomContainer moleculeTwo = new AtomContainer();
+		Atom Fe = new Atom("Fe");
+		Atom O = new Atom("O");
+		moleculeTwo.addAtom(Fe);
+		moleculeTwo.addAtom(O);
+		Bond b_1 = new Bond(Fe, O, IBond.Order.DOUBLE);
+		moleculeTwo.addBond(b_1);
 
-    }
+		moleculeTwo.setID("FeO");
+
+		substance.addAtomContainer(moleculeTwo);
+
+		Convertor convertor = new Convertor(true, null);
+		CMLSubstance convertedSubstance = convertor.cdkSubstanceToCMLSubstance(substance);
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		Serializer serializer = new Serializer(out, "UTF-8");
+
+		serializer.write(new Document(convertedSubstance));
+
+		out.close();
+
+		String expected = "cmlx:npo=\"http://purl.bioontology.org/ontology/npo#\" dictRef=\"npo:NPO_1895\" id=\"Fe3O4";
+		String actual = new String(out.toByteArray());
+
+		Assert.assertTrue(actual.contains(expected));
+
+	}
+
+	@Test
+	public void testCdkBondToCMLBond_Hatch() throws IOException {
+
+		IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
+		IBond bond = builder.newInstance(IBond.class);
+		bond.setOrder(IBond.Order.SINGLE);
+		bond.setStereo(IBond.Stereo.DOWN);
+
+		Convertor convertor = new Convertor(true, null);
+		CMLBond cmlBond = convertor.cdkBondToCMLBond(bond);
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		Serializer serializer = new Serializer(out, "UTF-8");
+
+		serializer.write(new Document(cmlBond));
+
+		out.close();
+
+		String expected = "<bondStereo dictRef=\"cml:H\">H</bondStereo>";
+		String actual = new String(out.toByteArray());
+
+		Assert.assertTrue(actual.contains(expected));
+
+	}
 
 }
