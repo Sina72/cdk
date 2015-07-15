@@ -385,36 +385,37 @@ public class Convertor {
         return cdkCrystalToCMLMolecule(crystal, true);
     }
     
-    /*
-     * Author : Sina M. Nick
-     * TODO: Check for Ontologies and ID
-     */
-    public CMLSubstance cdkSubstanceToCMLSubstance(ISubstance model) {
-    	CMLSubstance cmlSubstance = new CMLSubstance();
-    	cmlSubstance.setConvention("??");
-    	cmlSubstance.setDictRef("??:??");
+	public CMLSubstance cdkSubstanceToCMLSubstance(ISubstance model) {
 
-    	if(model.getID() != null)
-    		cmlSubstance.setId(model.getID());
-    	else
-    		cmlSubstance.setId("????");
+		CMLSubstance cmlSubstance = new CMLSubstance();
+		//cmlSubstance.setConvention("??");
 
-    	for (int j = 0; j < model.getAtomContainerCount() ; j++){
-    	
-    			IAtomContainer cdkAtomContainer = model.getAtomContainer(j);
-    			CMLMolecule cmlMolecule = cdkAtomContainerToCMLMolecule(cdkAtomContainer);
-    			
-    			if(cdkAtomContainer.getID() != null)
-    				cmlMolecule.setId(cdkAtomContainer.getID());
-    			
-    			cmlSubstance.addMolecule(cmlMolecule);
-    		}
-    		
-    	
-    	
-    	
-    	return cmlSubstance;
-    }
+		boolean isNano = false;
+		if (model.getProperties().containsValue("nanomaterial")) {
+			isNano = true;
+			cmlSubstance.setCMLXAttribute("npo", "http://purl.bioontology.org/ontology/npo#");
+			cmlSubstance.setDictRef("npo:NPO_1895");
+		}
+
+		if (model.getID() == null)
+			IDCreator.createIDs(model);
+		cmlSubstance.setId(model.getID());
+
+		for (int j = 0; j < model.getAtomContainerCount(); j++) {
+
+			IAtomContainer cdkAtomContainer = model.getAtomContainer(j);
+			CMLMolecule cmlMolecule = cdkAtomContainerToCMLMolecule(cdkAtomContainer);
+
+			if (cdkAtomContainer.getID() != null)
+				cmlMolecule.setId(cdkAtomContainer.getID());
+
+			if (isNano)
+				cmlMolecule.setDictRef("npo:NPO_1494");
+
+			cmlSubstance.addMolecule(cmlMolecule);
+		}
+		return cmlSubstance;
+	}
 
     private CMLMolecule cdkCrystalToCMLMolecule(ICrystal crystal, boolean setIDs) {
         CMLMolecule molecule = cdkAtomContainerToCMLMolecule(crystal, false, false);
