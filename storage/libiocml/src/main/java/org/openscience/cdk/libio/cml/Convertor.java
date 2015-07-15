@@ -385,37 +385,36 @@ public class Convertor {
         return cdkCrystalToCMLMolecule(crystal, true);
     }
     
-	public CMLSubstance cdkSubstanceToCMLSubstance(ISubstance model) {
+    public CMLSubstance cdkSubstanceToCMLSubstance(ISubstance model) {
 
-		CMLSubstance cmlSubstance = new CMLSubstance();
-		//cmlSubstance.setConvention("??");
+        CMLSubstance cmlSubstance = new CMLSubstance();
+        //cmlSubstance.setConvention("??");
 
-		boolean isNano = false;
-		if (model.getProperties().containsValue("nanomaterial")) {
-			isNano = true;
-			cmlSubstance.setCMLXAttribute("npo", "http://purl.bioontology.org/ontology/npo#");
-			cmlSubstance.setDictRef("npo:NPO_1895");
-		}
+        boolean isNano = false;
+        if (model.getProperties().containsValue("nanomaterial")) {
+            isNano = true;
+            cmlSubstance.setCMLXAttribute("npo", "http://purl.bioontology.org/ontology/npo#");
+            cmlSubstance.setDictRef("npo:NPO_1895");
+            }
 
-		if (model.getID() == null)
-			IDCreator.createIDs(model);
-		cmlSubstance.setId(model.getID());
+        if (model.getID() == null)
+            IDCreator.createIDs(model);
+        cmlSubstance.setId(model.getID());
 
-		for (int j = 0; j < model.getAtomContainerCount(); j++) {
+        for (int j = 0; j < model.getAtomContainerCount(); j++) {
+            IAtomContainer cdkAtomContainer = model.getAtomContainer(j);
+            CMLMolecule cmlMolecule = cdkAtomContainerToCMLMolecule(cdkAtomContainer);
 
-			IAtomContainer cdkAtomContainer = model.getAtomContainer(j);
-			CMLMolecule cmlMolecule = cdkAtomContainerToCMLMolecule(cdkAtomContainer);
+            if (cdkAtomContainer.getID() != null)
+                cmlMolecule.setId(cdkAtomContainer.getID());
 
-			if (cdkAtomContainer.getID() != null)
-				cmlMolecule.setId(cdkAtomContainer.getID());
+            if (isNano)
+                cmlMolecule.setDictRef("npo:NPO_1494");
 
-			if (isNano)
-				cmlMolecule.setDictRef("npo:NPO_1494");
-
-			cmlSubstance.addMolecule(cmlMolecule);
-		}
-		return cmlSubstance;
-	}
+            cmlSubstance.addMolecule(cmlMolecule);
+            }
+        return cmlSubstance;
+        }
 
     private CMLMolecule cdkCrystalToCMLMolecule(ICrystal crystal, boolean setIDs) {
         CMLMolecule molecule = cdkAtomContainerToCMLMolecule(crystal, false, false);
