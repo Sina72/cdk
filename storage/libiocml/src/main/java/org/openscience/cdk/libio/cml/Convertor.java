@@ -388,7 +388,7 @@ public class Convertor {
     public CMLSubstance cdkSubstanceToCMLSubstance(ISubstance model) {
 
         CMLSubstance cmlSubstance = new CMLSubstance();
-        //cmlSubstance.setConvention("??");
+        //TODO: set the convention
 
         boolean isNano = false;
         if (model.getProperties().containsValue("nanomaterial")) {
